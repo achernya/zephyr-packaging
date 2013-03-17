@@ -191,9 +191,9 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 %{_unitdir}/zhm.service
 %dir %{_sysconfdir}/zephyr
 %dir %{_sysconfdir}/zephyr/acl
-%config %{_sysconfdir}/zephyr/default.subscriptions
-%config %{_sysconfdir}/zephyr/zwgc.desc
-%config %{_sysconfdir}/zephyr/zwgc_resources
+%config(noreplace) %{_sysconfdir}/zephyr/default.subscriptions
+%config(noreplace) %{_sysconfdir}/zephyr/zwgc.desc
+%config(noreplace) %{_sysconfdir}/zephyr/zwgc_resources
 
 
 %files -n libzephyr4-krb5
