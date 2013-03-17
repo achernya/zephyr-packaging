@@ -6,6 +6,7 @@ Summary:	Project Athena's notification service
 License:	MIT
 URL:		http://zephyr.1ts.org/
 Source0:	http://zephyr.1ts.org/files/zephyr-%{version}.tar.gz
+Source1:	zhm.service
 
 BuildRequires:	krb5-devel
 BuildRequires:	readline-devel
@@ -18,6 +19,7 @@ BuildRequires:	libXt-devel
 BuildRequires:	xorg-x11-proto-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	c-ares-devel
+BuildRequires:	systemd-units
 Requires:	zephyr-lib%{?_isa} = %{version}-%{release}
 
 # Enable a hardened build, a bunch of processes are long-lived
@@ -96,6 +98,7 @@ TODO
 
 %prep
 %setup -q
+cp -p %{SOURCE1} .
 
 
 %build
@@ -147,6 +150,8 @@ for type in krb5 base; do
 done
 touch %{buildroot}/%{_sbindir}/zephyrd
 
+install -Dpm 644 zhm.service %{buildroot}/%{_unitdir}/zhm.service
+
 # Remove the .la files that somehow got installed
 find %{buildroot} -name '*.la' -delete
 
@@ -183,6 +188,7 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 %{_mandir}/man8/zhm.8.gz
 %{_mandir}/man8/zstat.8.gz
 %{_mandir}/man8/zshutdown_notify.8.gz
+%{_unitdir}/zhm.service
 %dir %{_sysconfdir}/zephyr
 %dir %{_sysconfdir}/zephyr/acl
 %config %{_sysconfdir}/zephyr/default.subscriptions

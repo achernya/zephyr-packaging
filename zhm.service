@@ -1,0 +1,11 @@
+[Unit]
+Description=Zephyr Host Manager (zhm)
+After=syslog.target network.target
+
+[Service]
+Type=forking
+EnvironmentFile=-/etc/sysconfig/zhm
+ExecStart=/usr/sbin/zhm $OPTIONS
+
+[Install]
+WantedBy=multi-user.target
