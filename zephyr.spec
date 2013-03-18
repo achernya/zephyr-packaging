@@ -201,7 +201,7 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 %{_libdir}/zephyr-krb5/libzephyr.so.4
 %{_libdir}/zephyr-krb5/libzephyr.so.4.0.0
 %{_datadir}/zephyr/zephyr-%{_arch}-krb5.conf
-%attr(0644, root, root) %ghost /etc/ld.so.conf.d/zephyr.conf
+%attr(0644, root, root) %ghost /etc/ld.so.conf.d/zephyr-%{_arch}.conf
 
 
 %files -n libzephyr4-krb5-devel
@@ -222,7 +222,7 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 %{_libdir}/zephyr/libzephyr.so.4
 %{_libdir}/zephyr/libzephyr.so.4.0.0
 %{_datadir}/zephyr/zephyr-%{_arch}.conf
-%attr(0644, root, root) %ghost /etc/ld.so.conf.d/zephyr.conf
+%attr(0644, root, root) %ghost /etc/ld.so.conf.d/zephyr-%{_arch}.conf
 
 
 %files -n libzephyr4-devel
@@ -240,27 +240,31 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 
 
 %post -n libzephyr4-krb5
-%{_sbindir}/update-alternatives --install /etc/ld.so.conf.d/zephyr.conf \
-				libzephyr %{_datadir}/zephyr/zephyr-%{_arch}-krb5.conf 50
+%{_sbindir}/update-alternatives --install /etc/ld.so.conf.d/zephyr-%{_arch}.conf \
+				libzephyr-%{_arch} \
+				%{_datadir}/zephyr/zephyr-%{_arch}-krb5.conf 50
 /sbin/ldconfig
 
 
 %postun -n libzephyr4-krb5
 if [ $1 -eq 0 ] ; then
-	%{_sbindir}/update-alternatives --remove libzephyr %{_datadir}/zephyr/zephyr-%{_arch}-krb5.conf
+	%{_sbindir}/update-alternatives --remove libzephyr-%{_arch} \
+	%{_datadir}/zephyr/zephyr-%{_arch}-krb5.conf
 fi
 /sbin/ldconfig
 
 
 %post -n libzephyr4
-%{_sbindir}/update-alternatives --install /etc/ld.so.conf.d/zephyr.conf \
-				libzephyr %{_datadir}/zephyr/zephyr-%{_arch}.conf 10
+%{_sbindir}/update-alternatives --install /etc/ld.so.conf.d/zephyr-%{_arch}.conf \
+				libzephyr-%{_arch} \
+				%{_datadir}/zephyr/zephyr-%{_arch}.conf 10
 /sbin/ldconfig
 
 
 %postun -n libzephyr4
 if [ $1 -eq 0 ] ; then
-	%{_sbindir}/update-alternatives --remove libzephyr %{_datadir}/zephyr/zephyr-%{_arch}.conf
+	%{_sbindir}/update-alternatives --remove libzephyr-%{_arch} \
+	%{_datadir}/zephyr/zephyr-%{_arch}.conf
 fi
 /sbin/ldconfig
 
