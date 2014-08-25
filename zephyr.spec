@@ -1,11 +1,13 @@
 Name:		zephyr
-Version:	3.0.2
+Version:	3.1.2
+%define commit 54c6b84a81301a1691f9bec10c63c1e36166df9d
+%define shortcommit %(c=%{commit}; echo ${c:0:7})
 Release:	1%{?dist}
 Summary:	Project Athena's notification service
 
 License:	MIT
 URL:		http://zephyr.1ts.org/
-Source0:	http://zephyr.1ts.org/files/zephyr-%{version}.tar.gz
+Source0:	https://github.com/zephyr-im/zephyr/archive/%{commit}/%{name}-%{version}-%{shortcommit}.tar.gz
 Source1:	zhm.service
 
 BuildRequires:	krb5-devel
@@ -41,7 +43,12 @@ Requires(postun): %{_sbindir}/update-alternatives
 
 
 %description -n libzephyr4-krb5
-TODO
+This version of the library uses Kerberos for message authentication.
+
+This is the Project Athena Zephyr notification system.
+Zephyr allows users to send messages to other users or to groups of
+users.  Users can view incoming Zephyr messages as windowgrams
+(transient X windows) or as text on a terminal.
 
 
 %package -n libzephyr4-krb5-devel
@@ -51,7 +58,13 @@ Provides:	libzephyr4-krb5-static = %{version}-%{release}
 
 
 %description -n libzephyr4-krb5-devel
-TODO
+Zephyr is derived from the original Project Athena 'Instant Message' system
+and allows users to send messages to other users or to groups of users.
+Users can view incoming Zephyr messages as windowgrams (transient X
+windows) or as text on a terminal.
+
+This package provides development libraries and files, which are
+needed to compile alternative Zephyr clients.
 
 
 %package server-krb5
@@ -62,7 +75,20 @@ Requires(postun): %{_sbindir}/update-alternatives
 
 
 %description server-krb5
-TODO
+You probably only need one server for a group of clients.
+This can be a memory-intensive server, especially for very large sites.
+
+The server maintains a location and subscription database for all the
+receiving clients. All zephyrgrams are sent to the server to be routed
+to the intended recipient.
+
+This version of the server uses Kerberos for message authentication.
+
+This is the Project Athena Zephyr notification system.
+Zephyr allows users to send messages to other users or to groups of
+users.  Users can view incoming Zephyr messages as windowgrams
+(transient X windows) or as text on a terminal.
+
 
 %package -n libzephyr4
 Summary:	Zephyr libraries
@@ -72,8 +98,12 @@ Requires(postun): %{_sbindir}/update-alternatives
 
 
 %description -n libzephyr4
-TODO
+Zephyr is derived from the original Project Athena 'Instant Message' system
+and allows users to send messages to other users or to groups of users.
+Users can view incoming Zephyr messages as windowgrams (transient X
+windows) or as text on a terminal.
 
+This package provides the libraries without Kerberos support.
 
 %package -n libzephyr4-devel
 Summary:	Zephyr libraries (development)
@@ -82,7 +112,13 @@ Provides:	libzephyr4-static = %{version}-%{release}
 
 
 %description -n libzephyr4-devel
-TODO
+Zephyr is derived from the original Project Athena 'Instant Message' system
+and allows users to send messages to other users or to groups of users.
+Users can view incoming Zephyr messages as windowgrams (transient X
+windows) or as text on a terminal.
+
+This package provides development libraries and files, which are
+needed to compile alternative Zephyr clients.
 
 
 %package server
@@ -93,11 +129,19 @@ Requires(postun): %{_sbindir}/update-alternatives
 
 
 %description server
-TODO
+Zephyr is derived from the original Project Athena 'Instant Message' system
+and allows users to send messages to other users or to groups of users.
+Users can view incoming Zephyr messages as windowgrams (transient X
+windows) or as text on a terminal.
+
+This package provides the server for the messaging service, which
+maintains a location and subscription database for all the receiving
+clients. All zephyrgrams are sent to the server to be routed to the
+intended recipient. Only one server is required for a group of clients.
 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{commit}
 cp -p %{SOURCE1} .
 
 
@@ -126,7 +170,10 @@ for type in base krb5; do
 	sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 	sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
-	make %{?_smp_mflags}
+	# TODO(achernya): Re-enable parallel builds when the build
+	# system can handle it
+	# make %{?_smp_mflags}
+	make
 	popd
 done
 
@@ -208,6 +255,7 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 %doc
 %{_libdir}/zephyr-krb5/libzephyr.so
 %{_libdir}/zephyr-krb5/libzephyr.a
+%{_libdir}/zephyr-krb5/pkgconfig/zephyr.pc
 %{_includedir}/zephyr
 
 
@@ -229,6 +277,7 @@ find %{buildroot}%{_libdir} -name 'libzephyr.so.*' -exec chmod a+x {} ';'
 %doc
 %{_libdir}/zephyr/libzephyr.so
 %{_libdir}/zephyr/libzephyr.a
+%{_libdir}/zephyr/pkgconfig/zephyr.pc
 %{_includedir}/zephyr
 
 
@@ -292,6 +341,9 @@ fi
 
 
 %changelog
+* Mon Aug 25 2014 Alexander Chernyakhovsky <achernya@mit.edu> - 3.1.2-1
+- Update descriptions, and update to 3.1.2
+
 * Wed Mar 13 2013 Alexander Chernyakhovsky <achernya@mit.edu> - 3.0.2-1
 - Initial packaging for zephyr
 
